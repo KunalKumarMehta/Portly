@@ -1,3 +1,9 @@
+export interface ContributionDay {
+  date: string;
+  contributionCount: number;
+  color: string;
+}
+
 export interface GitHubUser {
   login: string;
   name: string;
@@ -6,6 +12,10 @@ export interface GitHubUser {
   followers: number;
   publicRepos: number;
   url: string;
+  contributionYears: number[];
+  externalContributions: number;
+  reviewsGiven: number;
+  contributionCalendar: ContributionDay[];
 }
 
 export interface GitHubRepository {
@@ -15,6 +25,7 @@ export interface GitHubRepository {
   forkCount: number;
   primaryLanguage: { name: string } | null;
   url: string;
+  isExternal: boolean;
 }
 
 export interface PortfolioAnalysis {
@@ -22,4 +33,6 @@ export interface PortfolioAnalysis {
   topRepositories: GitHubRepository[];
   totalStars: number;
   topLanguages: Record<string, number>;
+  impactScore: number;
+  workPattern: 'Lone Wolf' | 'Collaborator' | 'Maintainer';
 }

@@ -13,6 +13,12 @@ import { PortfolioAnalysis } from '../../app/types/portfolio';
 vi.mock('../../app/components/ProfileHeader', () => ({
   ProfileHeader: () => <div data-testid="profile-header">Profile Header</div>,
 }));
+vi.mock('../../app/components/ImpactMetrics', () => ({
+  default: () => <div data-testid="impact-metrics">Impact Metrics</div>,
+}));
+vi.mock('../../app/components/ContributionHeatmap', () => ({
+  ContributionHeatmap: () => <div data-testid="contribution-heatmap">Contribution Heatmap</div>,
+}));
 vi.mock('../../app/components/SkillsSection', () => ({
   SkillsSection: () => <div data-testid="skills-section">Skills Section</div>,
 }));
@@ -49,7 +55,10 @@ describe('Portfolio Component', () => {
       bio: 'Test bio',
       followers: 10,
       publicRepos: 5,
-      url: 'https://github.com/testuser'
+      url: 'https://github.com/testuser',
+      externalContributions: 5,
+      reviewsGiven: 3,
+      contributionCalendar: []
     };
 
     const mockRepos = [
@@ -59,7 +68,8 @@ describe('Portfolio Component', () => {
         stargazerCount: 5,
         forkCount: 2,
         primaryLanguage: { name: 'TypeScript' },
-        url: 'https://github.com/testuser/test-repo'
+        url: 'https://github.com/testuser/test-repo',
+        isExternal: false
       }
     ];
 
@@ -67,7 +77,9 @@ describe('Portfolio Component', () => {
       user: mockProfile,
       topRepositories: mockRepos,
       totalStars: 5,
-      topLanguages: { TypeScript: 100 }
+      topLanguages: { TypeScript: 100 },
+      impactScore: 50,
+      workPattern: 'Lone Wolf'
     };
 
     vi.spyOn(github, 'fetchGitHubProfile').mockResolvedValue(mockProfile);
@@ -80,6 +92,8 @@ describe('Portfolio Component', () => {
       expect(screen.getByTestId('profile-header')).toBeDefined();
     }, { timeout: 2000 });
 
+    expect(screen.getByTestId('impact-metrics')).toBeDefined();
+    expect(screen.getByTestId('contribution-heatmap')).toBeDefined();
     expect(screen.getByTestId('skills-section')).toBeDefined();
     expect(screen.getByTestId('project-grid')).toBeDefined();
   });

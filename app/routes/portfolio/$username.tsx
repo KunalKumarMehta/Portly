@@ -6,6 +6,8 @@ import type { PortfolioAnalysis } from '../../types/portfolio';
 import { ProfileHeader } from '../../components/ProfileHeader';
 import { SkillsSection } from '../../components/SkillsSection';
 import { ProjectGrid } from '../../components/ProjectGrid';
+import ImpactMetrics from '../../components/ImpactMetrics';
+import { ContributionHeatmap } from '../../components/ContributionHeatmap';
 
 export const Route = createFileRoute('/portfolio/$username')({
   component: Portfolio,
@@ -46,8 +48,23 @@ function Portfolio() {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
       <ProfileHeader user={data.user} />
-      <SkillsSection languages={data.topLanguages} />
-      <ProjectGrid repos={data.topRepositories} />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <ImpactMetrics 
+          impactScore={data.impactScore}
+          externalContributions={data.user.externalContributions}
+          reviewsGiven={data.user.reviewsGiven}
+          workPattern={data.workPattern}
+        />
+        <SkillsSection languages={data.topLanguages} />
+      </div>
+
+      <ContributionHeatmap calendar={data.user.contributionCalendar} />
+      
+      <div className="mt-8">
+        <h3 className="text-xl font-bold mb-4">Top Projects</h3>
+        <ProjectGrid repos={data.topRepositories} />
+      </div>
     </div>
   );
 }

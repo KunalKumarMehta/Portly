@@ -1,14 +1,20 @@
 import { expect, test, describe } from "vitest";
-import { analyzePortfolio } from "../../app/server/analyzer";
+import { analyzePortfolio, calculateImpactScore, extractWorkPattern } from "../../app/server/analyzer";
 import type { GitHubUser, GitHubRepository } from "../../app/types/portfolio";
 
-describe("analyzePortfolio", () => {
+describe("analyzer logic", () => {
   const mockUser: GitHubUser = {
     login: "testuser",
     name: "Test User",
     avatarUrl: "https://example.com/avatar.png",
     bio: "Test bio",
     url: "https://github.com/testuser",
+    followers: 100,
+    publicRepos: 10,
+    contributionYears: [2023, 2024],
+    externalContributions: 15,
+    reviewsGiven: 20,
+    contributionCalendar: [],
   };
 
   const mockRepos: GitHubRepository[] = [
@@ -17,24 +23,97 @@ describe("analyzePortfolio", () => {
       description: "description 1",
       url: "https://github.com/testuser/repo1",
       stargazerCount: 10,
-      primaryLanguage: { name: "TypeScript", color: "#3178c6" },
+      primaryLanguage: { name: "TypeScript" },
       forkCount: 2,
+      isExternal: false,
     },
     {
       name: "repo2",
       description: "description 2",
       url: "https://github.com/testuser/repo2",
       stargazerCount: 5,
-      primaryLanguage: { name: "JavaScript", color: "#f1e05a" },
+      primaryLanguage: { name: "JavaScript" },
       forkCount: 1,
+      isExternal: false,
+    },
+  ];
+
+  describe("calculateImpactScore", () => {
+    test("should calculate score based on stars, external PRs, and reviews", () => {
+      // Stars (10+5) + (15 * 5) + (20 * 3) = 15 + 75 + 60 = 150
+      const score = calculateImpactScore(mockUser, mockRepos);
+      expect(score).toBe(150);
+    });
+  });
+
+  describe("extractWorkPattern", () => {
+    test("should return 'Maintainer' if total impact actions > 50", () => {
+      const maintainerUser = { ...mockUser, externalContributions: 30, reviewsGiven: 21 };
+      expect(extractWorkPattern(maintainerUser)).toBe("Maintainer");
+    });
+
+    test("should return 'Collaborator' if external contributions > 10", () => {
+      const collaboratorUser = { ...mockUser, externalContributions: 11, reviewsGiven: 5 };
+      expect(extractWorkPattern(collaboratorUser)).toBe("Collaborator");
+    });
+
+    test("should return 'Lone Wolf' otherwise", () => {
+      const loneWolfUser = { ...mockUser, externalContributions: 5, reviewsGiven: 5 };
+      expect(extractWorkPattern(loneWolfUser)).toBe("Lone Wolf");
+    });
+  });
+
+  describe("analyzePortfolio integration", () => {
+    test("should include impactScore and workPattern", () => {
+      const result = analyzePortfolio(mockUser, mockRepos);
+      expect(result.impactScore).toBe(150);
+      expect(result.workPattern).toBe("Collaborator");
+    });
+  });
+});
+
+describe("analyzePortfolio legacy", () => {
+  const mockUser: GitHubUser = {
+    login: "testuser",
+    name: "Test User",
+    avatarUrl: "https://example.com/avatar.png",
+    bio: "Test bio",
+    url: "https://github.com/testuser",
+    followers: 100,
+    publicRepos: 10,
+    contributionYears: [2023],
+    externalContributions: 0,
+    reviewsGiven: 0,
+    contributionCalendar: [],
+  };
+
+  const mockRepos: GitHubRepository[] = [
+    {
+      name: "repo1",
+      description: "description 1",
+      url: "https://github.com/testuser/repo1",
+      stargazerCount: 10,
+      primaryLanguage: { name: "TypeScript" },
+      forkCount: 2,
+      isExternal: false,
+    },
+    {
+      name: "repo2",
+      description: "description 2",
+      url: "https://github.com/testuser/repo2",
+      stargazerCount: 5,
+      primaryLanguage: { name: "JavaScript" },
+      forkCount: 1,
+      isExternal: false,
     },
     {
       name: "repo3",
       description: "description 3",
       url: "https://github.com/testuser/repo3",
       stargazerCount: 15,
-      primaryLanguage: { name: "TypeScript", color: "#3178c6" },
+      primaryLanguage: { name: "TypeScript" },
       forkCount: 3,
+      isExternal: false,
     },
   ];
 
