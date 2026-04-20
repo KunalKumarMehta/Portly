@@ -3,12 +3,16 @@ export interface GitHubUser {
   name: string;
   avatarUrl: string;
   bio: string;
+  followers: number;
+  publicRepos: number;
+  url: string;
 }
 
 export interface GitHubRepository {
   name: string;
   description: string;
   stargazerCount: number;
+  forkCount: number;
   primaryLanguage: { name: string } | null;
   url: string;
 }

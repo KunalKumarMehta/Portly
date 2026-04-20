@@ -1,6 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { fetchGitHubProfile } from '../../server/github';
+import { fetchGitHubProfile, fetchUserRepositories } from '../../server/github';
+import { analyzePortfolio } from '../../server/analyzer';
+import type { PortfolioAnalysis } from '../../types/portfolio';
+import { ProfileHeader } from '../../components/ProfileHeader';
+import { SkillsSection } from '../../components/SkillsSection';
+import { ProjectGrid } from '../../components/ProjectGrid';
 
 export const Route = createFileRoute('/portfolio/$username')({
   component: Portfolio,
@@ -8,7 +13,7 @@ export const Route = createFileRoute('/portfolio/$username')({
 
 function Portfolio() {
   const { username } = Route.useParams();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<PortfolioAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -17,9 +22,13 @@ function Portfolio() {
     async function loadData() {
       try {
         setLoading(true);
-        // Using the client-side fetcher since SSR is disabled
-        const profile = await fetchGitHubProfile(username);
-        if (mounted) setData(profile);
+        const [profile, repos] = await Promise.all([
+          fetchGitHubProfile(username),
+          fetchUserRepositories(username)
+        ]);
+        
+        const analysis = analyzePortfolio(profile, repos);
+        if (mounted) setData(analysis);
       } catch (err: any) {
         if (mounted) setError(err.message || 'Failed to load portfolio');
       } finally {
@@ -30,31 +39,15 @@ function Portfolio() {
     return () => { mounted = false; };
   }, [username]);
 
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Analyzing GitHub Profile for {username}...</div>;
-  if (error) return <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>Error: {error}</div>;
-  if (!data) return <div style={{ padding: '2rem', textAlign: 'center' }}>No data found.</div>;
+  if (loading) return <div className="p-8 text-center text-gray-500">Analyzing GitHub Profile for {username}...</div>;
+  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  if (!data) return <div className="p-8 text-center">No data found.</div>;
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
-      <header style={{ display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid #ccc', paddingBottom: '1rem' }}>
-        {data.avatar_url && <img src={data.avatar_url} alt={username} style={{ width: '100px', borderRadius: '50%' }} />}
-        <div>
-          <h1>{data.name || username}</h1>
-          <p>{data.bio}</p>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <span>👥 {data.followers} followers</span>
-            <span>📝 {data.public_repos} repos</span>
-          </div>
-        </div>
-      </header>
-      
-      <main style={{ marginTop: '2rem' }}>
-        <h2>Outstanding Portfolio Highlights</h2>
-        <p><i>(Analysis engine integration pending. Displaying raw data for now.)</i></p>
-        <pre style={{ background: '#f4f4f4', padding: '1rem', overflowX: 'auto' }}>
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      </main>
+    <div className="max-w-4xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
+      <ProfileHeader user={data.user} />
+      <SkillsSection languages={data.topLanguages} />
+      <ProjectGrid repos={data.topRepositories} />
     </div>
   );
 }

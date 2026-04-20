@@ -11,7 +11,7 @@ export function analyzePortfolio(user: GitHubUser, repos: GitHubRepository[]): P
 
   return {
     user,
-    topRepositories: repos.sort((a, b) => b.stargazerCount - a.stargazerCount).slice(0, 6),
+    topRepositories: [...repos].sort((a, b) => b.stargazerCount - a.stargazerCount).slice(0, 6),
     totalStars,
     topLanguages,
   };

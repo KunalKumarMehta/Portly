@@ -1,3 +1,8 @@
 {
-  "model": "antigravity-gemini-3.1-pro"
+  "model": "antigravity-gemini-3-flash",
+  "agents": {
+    "brainstormer": { "model": "antigravity-gemini-3-flash" },
+    "planner": { "model": "antigravity-gemini-3-flash" },
+    "executor": { "model": "antigravity-gemini-3-flash" }
+  }
 }
