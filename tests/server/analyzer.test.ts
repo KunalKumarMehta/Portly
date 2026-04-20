@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { analyzePortfolio } from '../../src/server/analyzer';
+import { analyzePortfolio } from '../../app/server/analyzer';
 
 test('analyzes portfolio correctly', () => {
   const user = { login: 'test', name: 'Test', avatarUrl: '', bio: '' };

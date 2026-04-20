@@ -7,8 +7,10 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "mkdir -p .output/public && echo 'Portly' > .output/public/index.html"
+    "test": "vitest",
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vinxi start"
   },
   "repository": {
     "type": "git",
@@ -17,19 +19,21 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/KunalKumarMehta/Portly/issues"
   },
   "homepage": "https://github.com/KunalKumarMehta/Portly#readme",
   "dependencies": {
     "@tanstack/react-router": "^1.168.23",
-    "@tanstack/start": "^1.120.20",
+    "@tanstack/router-generator": "^1.166.32",
+    "@tanstack/router-plugin": "^1.167.22",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "typescript": "^6.0.3",
-    "vite": "^6.4.2"
+    "vite": "^8.0.9"
   }
 }
