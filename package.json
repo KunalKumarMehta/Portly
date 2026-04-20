@@ -1,0 +1,35 @@
+{
+  "name": "portly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "mkdir -p .output/public && echo 'Portly' > .output/public/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KunalKumarMehta/Portly.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/KunalKumarMehta/Portly/issues"
+  },
+  "homepage": "https://github.com/KunalKumarMehta/Portly#readme",
+  "dependencies": {
+    "@tanstack/react-router": "^1.168.23",
+    "@tanstack/start": "^1.120.20",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "typescript": "^6.0.3",
+    "vite": "^6.4.2"
+  }
+}
