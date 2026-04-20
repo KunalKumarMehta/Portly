@@ -10,7 +10,8 @@
     "test": "vitest",
     "dev": "vite",
     "build": "vite build",
-    "start": "vinxi start"
+    "preview": "vite preview",
+    "start": "vite preview"
   },
   "repository": {
     "type": "git",
