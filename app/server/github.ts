@@ -1,6 +1,6 @@
 import type { GitHubUser, GitHubRepository } from '../types/portfolio';
 
-const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
+const GITHUB_GRAPHQL_URL = '/.netlify/functions/github-proxy';
 
 const USER_QUERY = `
   query($login: String!) {
@@ -43,12 +43,10 @@ const USER_QUERY = `
 `;
 
 async function fetchGraphQL(query: string, variables: any) {
-  const token = process.env.GITHUB_TOKEN;
   const res = await fetch(GITHUB_GRAPHQL_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ query, variables }),
   });

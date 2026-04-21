@@ -37,6 +37,10 @@ describe("GitHub API client", () => {
     globalThis.fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(mockGraphQLResponse), { status: 200 }));
 
     const user = await fetchGitHubProfile("testuser");
+    expect(globalThis.fetch).toHaveBeenCalledWith("/.netlify/functions/github-proxy", expect.any(Object));
+    const callArgs = (globalThis.fetch as any).mock.calls[0][1];
+    expect(callArgs.headers).not.toHaveProperty("Authorization");
+
     expect(user.login).toBe("testuser");
     expect(user.name).toBe("Test User");
     expect(user.avatarUrl).toBe("https://avatar.url");
